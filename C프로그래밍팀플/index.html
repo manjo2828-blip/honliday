@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honliday, 평택대생을 위한 혼밥 가이드</title>
+
+    <script src="https://kit.fontawesome.com/efcd943b4f.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="images/honlidaylogo.png">
+</head>
+
+<body>
+
+    <!-- 상단 네비게이션 -->
+    <header class="top-nav">
+        <div class="top-nav-left" onclick="location.href='page.html'" style="cursor:pointer;">
+            <img src="images/honlidaylogo.png" class="nav-logo" alt="logo">
+            <span class="nav-title">Honliday</span>
+        </div>
+
+        <div class="top-nav-menu">
+            <div class="dropdown">
+                <button class="nav-item dropdown-btn">메뉴 종류</button>
+                <div class="dropdown-content">
+                    <a href="han.html">한식</a>
+                    <a href="jung.html">중식</a>
+                    <a href="il.html">일식</a>
+                    <a href="yang.html">양식</a>
+                </div>
+            </div>
+
+            <!-- 🔥 음식점 찾기 → 음식점.html 이동 -->
+            <a href="음식점.html" class="nav-item">음식점 찾기</a>
+        </div>
+    </header>
+
+    <main>
+
+        <section>
+            <div class="sec__title">평택대학교 추천 혼밥집</div>
+
+            <div class="home__box">
+
+                <div class="home" onclick="goPage('육미촌.html')">
+                    <div class="home__img1"></div>
+                    <div class="home__info">
+                        <div class="info1">육류, 고기요리</div>
+                        <div class="info2">육미촌 평택대학교점</div>
+                        <div class="info3">
+                            <span class="count">4.41</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 현촌5길 5-20</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('하우스파스타.html')">
+                    <div class="home__img2"></div>
+                    <div class="home__info">
+                        <div class="info1">파스타 전문</div>
+                        <div class="info2">하우스 파스타</div>
+                        <div class="info3">
+                            <span class="count">4.68</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 현촌5길 16-19</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('재홍분식.html')">
+                    <div class="home__img3"></div>
+                    <div class="home__info">
+                        <div class="info1">종합분식</div>
+                        <div class="info2">재홍분식플러스</div>
+                        <div class="info3">
+                            <span class="count">4.3</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 현신로 24</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('오백국수.html')">
+                    <div class="home__img4"></div>
+                    <div class="home__info">
+                        <div class="info1">국수</div>
+                        <div class="info2">오백국수</div>
+                        <div class="info3">
+                            <span class="count">4.8</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 서동대로 3867</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('참치대장.html')">
+                    <div class="home__img5"></div>
+                    <div class="home__info">
+                        <div class="info1">해산물</div>
+                        <div class="info2">참치대장</div>
+                        <div class="info3">
+                            <span class="count">4.4</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 현신로 8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('카츠인콘니치.html')">
+                    <div class="home__img6"></div>
+                    <div class="home__info">
+                        <div class="info1">일식</div>
+                        <div class="info2">카츠인 콘니치</div>
+                        <div class="info3">
+                            <span class="count">5.0</span>
+                            <span class="star">★★★★★</span>
+                            <span class="type">평택시 현촌5길 5-12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('짬뽕지존.html')">
+                    <div class="home__img7"></div>
+                    <div class="home__info">
+                        <div class="info1">중식</div>
+                        <div class="info2">짬뽕지존</div>
+                        <div class="info3">
+                            <span class="count">4.53</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 현신로 8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="home" onclick="goPage('미소본칼국수.html')">
+                    <div class="home__img8"></div>
+                    <div class="home__info">
+                        <div class="info1">칼국수·만두</div>
+                        <div class="info2">미소본칼국수</div>
+                        <div class="info3">
+                            <span class="count">4.2</span>
+                            <span class="star">★★★★☆</span>
+                            <span class="type">평택시 현신로 8</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function goPage(file) {
+            window.location.href = file;
+        }
+    </script>
+
+</body>
+</html>

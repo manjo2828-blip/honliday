@@ -1,0 +1,235 @@
+/* =====================
+   기본 설정
+===================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+main {
+    margin: 30px 80px;
+}
+
+section {
+    margin: 40px 0;
+}
+
+.sec__title {
+    font-size: 25px;
+    font-weight: 800;
+    color: rgb(80, 78, 78);
+    margin-bottom: 20px;
+}
+
+/* =====================
+   상단 네비게이션
+===================== */
+.top-nav {
+    width: 100%;
+    height: 55px;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.top-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.nav-logo {
+    width: 28px;
+    height: 28px;
+}
+
+.nav-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFD43B;
+}
+
+/* 오른쪽 메뉴 */
+.top-nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.nav-item {
+    font-size: 15px;
+    text-decoration: none;
+    color: #333;
+    padding: 6px 8px;
+}
+
+.nav-item:hover {
+    background: #f2f2f2;
+    border-radius: 4px;
+}
+
+/* =====================
+   드롭다운 메뉴
+===================== */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 6px 8px;
+}
+
+.dropdown-btn:hover {
+    background: #f2f2f2;
+    border-radius: 4px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    overflow: hidden;
+    width: 130px;
+}
+
+.dropdown:hover .dropdown-content,
+.dropdown-content:hover {
+    display: block;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 12px 10px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-content a:hover {
+    background: #f9f9f9;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+/* =====================
+   혼밥집 박스
+===================== */
+.home__box {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 15px;
+}
+
+.home {
+    cursor: pointer;
+}
+
+.home__info .info1 {
+    font-size: 13px;
+    color: gray;
+}
+
+.home__info .info2 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.star {
+    font-size: 12px;
+    color: rgb(30, 119, 115);
+    font-weight: 800;
+}
+
+.count, .type {
+    font-size: 12px;
+}
+
+.home__img1 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/육미촌.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img2 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/하우스파스타.webp");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img3 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/재홍분식.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img4 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/오백국수.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img5 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/참치대장.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img6 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/카츠인콘니치.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img7 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/짬뽕지존.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.home__img8 {
+    width: 100%;
+    height: 150px;
+    background-image: url("../images/미소본칼국수.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+}
