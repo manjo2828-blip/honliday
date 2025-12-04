@@ -75,6 +75,7 @@
             color: #fff;
             font-size: 14px;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         #search-button:hover {
@@ -112,9 +113,7 @@
         const lib = await google.maps.importLibrary("places");
         Place = lib.Place;
 
-        // ----------------------------
-        // ✅ 1) 초기 음식점 마커 찍기
-        // ----------------------------
+        // 초기 음식점 마커 표시
         const initialRequest = {
             textQuery: "restaurant near 평택대학교",
             fields: ["displayName", "location"]
@@ -123,13 +122,12 @@
         try {
             const { places } = await Place.searchByText(initialRequest);
 
-            console.log("초기 places:", places);
+            console.log("초기 검색 places:", places);
 
             if (places) {
                 places.forEach(place => {
                     if (!place.location) return;
 
-                    // 초기 데이터 구조는 lat, lng 사용
                     new google.maps.Marker({
                         map,
                         position: {
@@ -144,10 +142,7 @@
             console.error("초기 검색 오류:", e);
         }
 
-
-        // ----------------------------
-        // ✅ 2) 검색 기능
-        // ----------------------------
+        // 검색 기능
         const input = document.getElementById("search-input");
         const button = document.getElementById("search-button");
 
@@ -170,27 +165,33 @@
                     return;
                 }
 
-                const target = places[0];
-                const loc = target.location;
+                // 🔥 핵심 수정: 올바른 lat/lng 가진 장소 찾기
+                let target = null;
 
-                // ⭐ 검색 결과는 latLng 안에 있음
-                if (!loc || !loc.latLng) {
+                for (const p of places) {
+                    if (p.location && typeof p.location.lat === "number" && typeof p.location.lng === "number") {
+                        target = p;
+                        break;
+                    }
+                }
+
+                if (!target) {
                     alert("위치 정보가 없는 장소입니다.");
                     return;
                 }
 
-                const position = {
-                    lat: loc.latLng.latitude,
-                    lng: loc.latLng.longitude
+                const pos = {
+                    lat: target.location.lat,
+                    lng: target.location.lng
                 };
 
                 new google.maps.Marker({
                     map,
-                    position,
+                    position: pos,
                     title: target.displayName
                 });
 
-                map.panTo(position);
+                map.panTo(pos);
                 map.setZoom(19);
 
             } catch (e) {
