@@ -62,13 +62,13 @@
     function initMap() {
         const ptu = { lat: 36.9982, lng: 127.1320 };
 
-        // 🔥 1) 모든 기본 POI (편의점/음식점/카페 등) 아이콘 숨기기
         map = new google.maps.Map(document.getElementById("map"), {
             center: ptu,
             zoom: 15,
             styles: [
                 {
-                    featureType: "poi",          // POI 전체
+                    featureType: "poi",
+                    elementType: "labels.icon",   // 아이콘만 숨김!!
                     stylers: [{ visibility: "off" }]
                 }
             ]
@@ -76,7 +76,6 @@
 
         const service = new google.maps.places.PlacesService(map);
 
-        // 🔥 2) 주변 음식점 검색해서 우리 마커로 표시
         service.nearbySearch(
             {
                 location: ptu,
@@ -84,7 +83,7 @@
                 type: ["restaurant"]
             },
             (results, status) => {
-                console.log("Places status:", status, results); // 디버깅용
+                console.log("Places status:", status, results);
 
                 if (status !== google.maps.places.PlacesServiceStatus.OK) {
                     alert("Places 검색 실패: " + status);
@@ -94,7 +93,7 @@
                 results.forEach(place => {
                     if (!place.geometry || !place.geometry.location) return;
 
-                    // 아이콘 안 건드리면 → 기본 빨간 핀 마커
+                    // 👉 기본 빨간 핀으로 표시됨
                     new google.maps.Marker({
                         map,
                         position: place.geometry.location,
@@ -110,3 +109,4 @@
 
 </body>
 </html>
+
