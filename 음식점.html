@@ -99,117 +99,120 @@
 <div id="map"></div>
 
 <script>
-let map;
-let Place;
+    let map;
+    let Place;
 
-async function initMap() {
-    const ptu = { lat: 36.9982, lng: 127.1320 };
+    async function initMap() {
+        const ptu = { lat: 36.9982, lng: 127.1320 };
 
-    map = new google.maps.Map(document.getElementById("map"), {
-        center: ptu,
-        zoom: 15
-    });
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: ptu,
+            zoom: 15
+        });
 
-    const lib = await google.maps.importLibrary("places");
-    Place = lib.Place;
+        const lib = await google.maps.importLibrary("places");
+        Place = lib.Place;
 
-    // 초기 마커
-    const initialRequest = {
-        textQuery: "restaurant near 평택대학교",
-        fields: ["displayName", "location"]
-    };
-
-    try {
-        const { places } = await Place.searchByText(initialRequest);
-        if (places) {
-            places.forEach(place => {
-                const loc = extractLatLng(place.location);
-                if (!loc) return;
-
-                new google.maps.Marker({
-                    map,
-                    position: loc,
-                    title: place.displayName
-                });
-            });
-        }
-    } catch (e) {
-        console.error("초기 검색 오류:", e);
-    }
-
-    const input = document.getElementById("search-input");
-    const button = document.getElementById("search-button");
-
-    async function searchAndZoom() {
-        const query = input.value.trim();
-        if (!query) return;
-
-        const request = {
-            textQuery: query + " 평택대학교 근처",
+        // 초기 음식점 마커 표시
+        const initialRequest = {
+            textQuery: "restaurant near 평택대학교",
             fields: ["displayName", "location"]
         };
 
         try {
-            const { places } = await Place.searchByText(request);
+            const { places } = await Place.searchByText(initialRequest);
 
-            if (!places || places.length === 0) {
-                alert("검색 결과가 없습니다.");
-                return;
+            // 🔵 ① 초기 로딩 때 구조 한 번 찍어보기
+            console.log("초기 검색 places:", places);
+            if (places && places.length > 0) {
+                console.log("초기 첫 장소 raw:", JSON.stringify(places[0], null, 2));
             }
 
-            const target = places[0];
-            const loc = extractLatLng(target.location);
+            if (places) {
+                places.forEach(place => {
+                    // ⭐ 잠시 위치 사용 X → 에러 안 나게 주석 처리해도 됨
+                    if (!place.location || !place.location.latLng) return;
 
-            if (!loc) {
-                alert("이 장소는 위치 정보가 없습니다.");
-                return;
+                    new google.maps.Marker({
+                        map,
+                        position: {
+                            lat: place.location.latLng.latitude,
+                            lng: place.location.latLng.longitude
+                        },
+                        title: place.displayName
+                    });
+                });
             }
-
-            new google.maps.Marker({
-                map,
-                position: loc,
-                title: target.displayName
-            });
-
-            map.panTo(loc);
-            map.setZoom(19);
-
         } catch (e) {
-            console.error("검색 오류:", e);
-            alert("검색 중 문제가 발생했습니다.");
+            console.error("초기 검색 오류:", e);
         }
-    }
 
-    function extractLatLng(locationObj) {
-        if (!locationObj) return null;
+        // 검색 기능
+        const input = document.getElementById("search-input");
+        const button = document.getElementById("search-button");
 
-        // Case 1: 최신 API 구조
-        if (locationObj.latLng) {
-            return {
-                lat: locationObj.latLng.latitude,
-                lng: locationObj.latLng.longitude
+        async function searchAndZoom() {
+            const query = input.value.trim();
+            if (!query) return;
+
+            const request = {
+                textQuery: query + " 평택대학교 근처",
+                fields: ["displayName", "location"]
             };
+
+            try {
+                const { places } = await Place.searchByText(request);
+
+                // 🔵 ② 검색 결과 구조 확인용 로그
+                console.log("검색 places:", places);
+                if (places && places.length > 0) {
+                    console.log("검색 첫 장소 raw:", JSON.stringify(places[0], null, 2));
+                }
+
+                if (!places || places.length === 0) {
+                    alert("검색 결과가 없습니다.");
+                    return;
+                }
+
+                const target = places[0];
+                const loc = target.location;
+
+                if (!loc || !loc.latLng) {
+                    alert("위치 정보가 없는 장소입니다.");
+                    return;
+                }
+
+                const position = {
+                    lat: loc.latLng.latitude,   // ← latLng 안쪽에서 꺼내기
+                    lng: loc.latLng.longitude
+                };
+
+                new google.maps.Marker({
+                    map,
+                    position,
+                    title: target.displayName
+                });
+
+                map.panTo(position);
+                map.setZoom(19);
+
+            } catch (e) {
+                console.error("검색 오류:", e);
+                alert("검색 중 문제가 발생했습니다.");
+            }
         }
 
-        // Case 2: 예전 구조
-        if (locationObj.latitude && locationObj.longitude) {
-            return {
-                lat: locationObj.latitude,
-                lng: locationObj.longitude
-            };
-        }
-
-        return null;
+        button.addEventListener("click", searchAndZoom);
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                searchAndZoom();
+            }
+        });
     }
-
-    button.addEventListener("click", searchAndZoom);
-    input.addEventListener("keydown", e => {
-        if (e.key === "Enter") searchAndZoom();
-    });
-}
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k&callback=initMap" async defer></script>
 
 </body>
 </html>
+
