@@ -102,30 +102,6 @@
     let map;
     let Place;
 
-    // ⭐ OLD(lat,lng) + NEW(latLng.latitude, longitude) 둘 다 지원하는 함수
-    function getLatLng(place) {
-        if (!place.location) return null;
-
-        // NEW API: location.latLng.latitude
-        if (place.location.latLng) {
-            return {
-                lat: place.location.latLng.latitude,
-                lng: place.location.latLng.longitude
-            };
-        }
-
-        // OLD API: location.lat, location.lng
-        if (typeof place.location.lat === "number" &&
-            typeof place.location.lng === "number") {
-            return {
-                lat: place.location.lat,
-                lng: place.location.lng
-            };
-        }
-
-        return null;
-    }
-
     async function initMap() {
         const ptu = { lat: 36.9982, lng: 127.1320 };
 
@@ -137,11 +113,9 @@
         const lib = await google.maps.importLibrary("places");
         Place = lib.Place;
 
-
         // ============================
-        // ⭐ 초기 음식점 마커 표시
+        // 초기 음식점 마커 표시
         // ============================
-
         const initialRequest = {
             textQuery: "restaurant near 평택대학교",
             fields: ["displayName", "location"]
@@ -151,26 +125,27 @@
             const { places } = await Place.searchByText(initialRequest);
             console.log("초기 places:", places);
 
-            places.forEach(place => {
-                const pos = getLatLng(place);
-                if (!pos) return; // 위치 없는 결과는 무시
+            if (places && places.length > 0) {
+                places.forEach(place => {
+                    if (!place.location) return;
 
-                new google.maps.Marker({
-                    map,
-                    position: pos,
-                    title: place.displayName
+                    new google.maps.Marker({
+                        map,
+                        position: {
+                            lat: place.location.lat,
+                            lng: place.location.lng
+                        },
+                        title: place.displayName
+                    });
                 });
-            });
-
+            }
         } catch (e) {
             console.error("초기 검색 오류:", e);
         }
 
-
         // ============================
-        // ⭐ 검색 기능
+        // 검색 기능
         // ============================
-
         const input = document.getElementById("search-input");
         const button = document.getElementById("search-button");
 
@@ -192,33 +167,30 @@
                     return;
                 }
 
-                // ⭐ 검색된 결과 중 위치 정상인 첫 번째 장소 찾기
-                let target = null;
-                for (const place of places) {
-                    const pos = getLatLng(place);
-                    if (pos) {
-                        target = { place, pos };
-                        break;
-                    }
-                }
-
+                // 위치 있는 첫 번째 결과만 사용
+                const target = places.find(p => p.location);
                 if (!target) {
-                    alert("위치 정보를 찾을 수 없습니다.");
+                    alert("위치 정보가 없는 장소입니다.");
                     return;
                 }
 
+                const position = {
+                    lat: target.location.lat,
+                    lng: target.location.lng
+                };
+
                 new google.maps.Marker({
                     map,
-                    position: target.pos,
-                    title: target.place.displayName
+                    position,
+                    title: target.displayName
                 });
 
-                map.panTo(target.pos);
+                map.panTo(position);
                 map.setZoom(19);
 
             } catch (e) {
                 console.error("검색 오류:", e);
-                alert("검색 중 오류가 발생했습니다.");
+                alert("검색 중 문제가 발생했습니다.");
             }
         }
 
@@ -233,4 +205,3 @@
 
 </body>
 </html>
-
