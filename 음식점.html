@@ -59,7 +59,7 @@
 <script>
     let map;
 
-    function initMap() {
+    async function initMap() {
         const ptu = { lat: 36.9982, lng: 127.1320 };
 
         map = new google.maps.Map(document.getElementById("map"), {
@@ -70,42 +70,52 @@
                     featureType: "poi.business",
                     elementType: "labels.icon",
                     stylers: [{ visibility: "off" }]
-            }
+                }
             ]
         });
 
+        // 🔥 NEW Places API (Text Search 또는 Nearby Search)
+        const apiKey = "AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k";
 
-        const service = new google.maps.places.PlacesService(map);
+        const url =
+            `https://places.googleapis.com/v1/places:searchNearby?key=${apiKey}`;
 
-        service.nearbySearch(
-            {
-                location: ptu,
-                radius: 2000,
-                type: ["restaurant"]
+        // Google Places NEW API 요청
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             },
-            (results, status) => {
-                console.log("Places status:", status, results);
-
-                console.log("검색된 장소 개수:", results?.length);
-
-                
-                if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                    alert("Places 검색 실패: " + status);
-                    return;
+            body: JSON.stringify({
+                includedTypes: ["restaurant"],
+                maxResultCount: 20,
+                locationRestriction: {
+                    circle: {
+                        center: ptu,
+                        radius: 2000
+                    }
                 }
+            })
+        });
 
-                results.forEach(place => {
-                    if (!place.geometry || !place.geometry.location) return;
+        const data = await response.json();
+        console.log("검색 결과:", data);
 
-                    // 👉 기본 빨간 핀으로 표시됨
-                    new google.maps.Marker({
-                        map,
-                        position: place.geometry.location,
-                        title: place.name
-                    });
-                });
-            }
-        );
+        if (!data.places) {
+            console.log("검색 결과 없음");
+            return;
+        }
+
+        // 🔥 마커 표시
+        data.places.forEach(place => {
+            const location = place.location;
+
+            new google.maps.Marker({
+                map,
+                position: { lat: location.latitude, lng: location.longitude },
+                title: place.displayName.text
+            });
+        });
     }
 </script>
 
