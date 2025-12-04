@@ -62,42 +62,29 @@
     async function initMap() {
         const ptu = { lat: 36.9982, lng: 127.1320 };
 
-        // 지도 생성
         map = new google.maps.Map(document.getElementById("map"), {
             center: ptu,
-            zoom: 15,
-            styles: [
-                {
-                    featureType: "poi.business",
-                    elementType: "labels.icon",
-                    stylers: [{ visibility: "off" }]
-                }
-            ]
+            zoom: 15
         });
 
-        const apiKey = "AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k";
+        const { Place } = google.maps.places;
 
-        // ✔ 작동 100% 되는 구 버전 Nearby Search REST API
-        const url =
-            `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${ptu.lat},${ptu.lng}&radius=2000&type=restaurant&key=${apiKey}`;
+        const request = {
+            textQuery: "restaurant near 평택대학교",
+            maxResultCount: 20
+        };
 
-        const response = await fetch(url);
-        const data = await response.json();
+        const response = await Place.searchByText(request);
+        const places = response.places;
 
-        console.log("검색 결과:", data);
-
-        if (!data.results) {
-            console.log("검색 결과 없음");
-            return;
-        }
-
-        // 마커 생성
-        data.results.forEach(place => {
-            const loc = place.geometry.location;
+        places.forEach(p => {
             new google.maps.Marker({
                 map,
-                position: { lat: loc.lat, lng: loc.lng },
-                title: place.name
+                position: {
+                    lat: p.location.latitude,
+                    lng: p.location.longitude
+                },
+                title: p.displayName
             });
         });
     }
@@ -107,3 +94,4 @@
 
 </body>
 </html>
+
