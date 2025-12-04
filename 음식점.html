@@ -122,7 +122,6 @@
         try {
             const { places } = await Place.searchByText(initialRequest);
 
-            // 🔵 ① 초기 로딩 때 구조 한 번 찍어보기
             console.log("초기 검색 places:", places);
             if (places && places.length > 0) {
                 console.log("초기 첫 장소 raw:", JSON.stringify(places[0], null, 2));
@@ -130,14 +129,13 @@
 
             if (places) {
                 places.forEach(place => {
-                    // ⭐ 잠시 위치 사용 X → 에러 안 나게 주석 처리해도 됨
-                    if (!place.location || !place.location.latLng) return;
+                    if (!place.location) return;
 
                     new google.maps.Marker({
                         map,
                         position: {
-                            lat: place.location.latLng.latitude,
-                            lng: place.location.latLng.longitude
+                            lat: place.location.lat,
+                            lng: place.location.lng
                         },
                         title: place.displayName
                     });
@@ -163,7 +161,6 @@
             try {
                 const { places } = await Place.searchByText(request);
 
-                // 🔵 ② 검색 결과 구조 확인용 로그
                 console.log("검색 places:", places);
                 if (places && places.length > 0) {
                     console.log("검색 첫 장소 raw:", JSON.stringify(places[0], null, 2));
@@ -177,14 +174,14 @@
                 const target = places[0];
                 const loc = target.location;
 
-                if (!loc || !loc.latLng) {
+                if (!loc) {
                     alert("위치 정보가 없는 장소입니다.");
                     return;
                 }
 
                 const position = {
-                    lat: loc.latLng.latitude,   // ← latLng 안쪽에서 꺼내기
-                    lng: loc.latLng.longitude
+                    lat: loc.lat,
+                    lng: loc.lng
                 };
 
                 new google.maps.Marker({
@@ -215,4 +212,3 @@
 
 </body>
 </html>
-
