@@ -109,23 +109,50 @@
     let map;
     let Place;
 
-    async function initMap() {
-        const ptu = { lat: 36.9982, lng: 127.1320 };
+    async function searchAndZoom() {
+    const query = input.value.trim();
+    if (!query) return;
 
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: ptu,
-            zoom: 15
+    const request = {
+        textQuery: query + " 평택대학교 근처",   // 더 정확한 검색을 위해 수정
+        fields: ["displayName", "location"]
+    };
+
+    try {
+        const { places } = await Place.searchByText(request);
+
+        if (!places || places.length === 0) {
+            alert("검색 결과가 없습니다.");
+            return;
+        }
+
+        const target = places[0];
+        const loc = target.location;
+
+        if (!loc) {
+            alert("이 장소의 위치 정보가 없습니다.");
+            return;
+        }
+
+        // 🔥 정확히 해당 음식점 좌표로 이동
+        const position = { lat: loc.latitude, lng: loc.longitude };
+
+        // 마커 생성 (검색 이동용)
+        new google.maps.Marker({
+            map,
+            position,
+            title: target.displayName
         });
 
-        // NEW Places API 로드
-        const lib = await google.maps.importLibrary("places");
-        Place = lib.Place;
+        // 지도 이동 + 확대
+        map.panTo(position);
+        map.setZoom(19); // 더 확대해서 정확히 보이게
+    } catch (e) {
+        console.error("검색 오류:", e);
+        alert("검색 중 오류가 발생했습니다.");
+    }
+    }
 
-        // 초기 음식점 마커 찍기
-        const initialRequest = {
-            textQuery: "restaurant near 평택대학교",
-            fields: ["displayName", "location"]
-        };
 
         try {
             const { places } = await Place.searchByText(initialRequest);
@@ -193,3 +220,4 @@
 
 </body>
 </html>
+
