@@ -74,52 +74,63 @@
             ]
         });
 
-        // 🔥 NEW Places API (Text Search 또는 Nearby Search)
         const apiKey = "AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k";
 
-        const url =
-            `https://places.googleapis.com/v1/places:searchNearby?key=${apiKey}`;
+        const url = "https://places.googleapis.com/v1/places:searchNearby";
 
-        // Google Places NEW API 요청
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                includedTypes: ["restaurant"],
-                maxResultCount: 20,
-                locationRestriction: {
-                    circle: {
-                        center: ptu,
-                        radius: 2000
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Goog-Api-Key": apiKey,
+                    // 어떤 필드들을 받을지 지정 (필수)
+                    "X-Goog-FieldMask": "places.displayName,places.location"
+                },
+                body: JSON.stringify({
+                    includedTypes: ["restaurant"],
+                    maxResultCount: 20,
+                    locationRestriction: {
+                        circle: {
+                            center: {
+                                latitude: ptu.lat,      // 🔥 lat / lng 말고
+                                longitude: ptu.lng      // 🔥 latitude / longitude
+                            },
+                            radius: 2000
+                        }
                     }
-                }
-            })
-        });
-
-        const data = await response.json();
-        console.log("검색 결과:", data);
-
-        if (!data.places) {
-            console.log("검색 결과 없음");
-            return;
-        }
-
-        // 🔥 마커 표시
-        data.places.forEach(place => {
-            const location = place.location;
-
-            new google.maps.Marker({
-                map,
-                position: { lat: location.latitude, lng: location.longitude },
-                title: place.displayName.text
+                })
             });
-        });
+
+            const data = await response.json();
+            console.log("검색 결과:", data);
+
+            if (data.error) {
+                console.error("Places API 오류:", data.error);
+                return;
+            }
+
+            if (!data.places || data.places.length === 0) {
+                console.log("검색 결과 없음");
+                return;
+            }
+
+            data.places.forEach(place => {
+                const loc = place.location;
+                new google.maps.Marker({
+                    map,
+                    position: { lat: loc.latitude, lng: loc.longitude },
+                    title: place.displayName.text
+                });
+            });
+
+        } catch (e) {
+            console.error("요청 중 에러:", e);
+        }
     }
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k&callback=initMap" async defer></script>
 
 </body>
 </html>
