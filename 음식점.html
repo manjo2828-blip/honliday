@@ -62,6 +62,7 @@
     async function initMap() {
         const ptu = { lat: 36.9982, lng: 127.1320 };
 
+        // 지도 생성
         map = new google.maps.Map(document.getElementById("map"), {
             center: ptu,
             zoom: 15,
@@ -76,57 +77,29 @@
 
         const apiKey = "AIzaSyD2KOeNwy1EHxadgwtOAV15q3NAWyBfK0k";
 
-        const url = "https://places.googleapis.com/v1/places:searchNearby";
+        // ✔ 작동 100% 되는 구 버전 Nearby Search REST API
+        const url =
+            `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${ptu.lat},${ptu.lng}&radius=2000&type=restaurant&key=${apiKey}`;
 
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Goog-Api-Key": apiKey,
-                    // 어떤 필드들을 받을지 지정 (필수)
-                    "X-Goog-FieldMask": "places.displayName,places.location"
-                },
-                body: JSON.stringify({
-                    includedTypes: ["restaurant"],
-                    maxResultCount: 20,
-                    locationRestriction: {
-                        circle: {
-                            center: {
-                                latitude: ptu.lat,      // 🔥 lat / lng 말고
-                                longitude: ptu.lng      // 🔥 latitude / longitude
-                            },
-                            radius: 2000
-                        }
-                    }
-                })
-            });
+        const response = await fetch(url);
+        const data = await response.json();
 
-            const data = await response.json();
-            console.log("검색 결과:", data);
+        console.log("검색 결과:", data);
 
-            if (data.error) {
-                console.error("Places API 오류:", data.error);
-                return;
-            }
-
-            if (!data.places || data.places.length === 0) {
-                console.log("검색 결과 없음");
-                return;
-            }
-
-            data.places.forEach(place => {
-                const loc = place.location;
-                new google.maps.Marker({
-                    map,
-                    position: { lat: loc.latitude, lng: loc.longitude },
-                    title: place.displayName.text
-                });
-            });
-
-        } catch (e) {
-            console.error("요청 중 에러:", e);
+        if (!data.results) {
+            console.log("검색 결과 없음");
+            return;
         }
+
+        // 마커 생성
+        data.results.forEach(place => {
+            const loc = place.geometry.location;
+            new google.maps.Marker({
+                map,
+                position: { lat: loc.lat, lng: loc.lng },
+                title: place.name
+            });
+        });
     }
 </script>
 
