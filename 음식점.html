@@ -67,12 +67,13 @@
             zoom: 15,
             styles: [
                 {
-                    featureType: "poi",
-                    elementType: "labels.icon",   // 아이콘만 숨김!!
+                    featureType: "poi.business",
+                    elementType: "labels.icon",
                     stylers: [{ visibility: "off" }]
-                }
+            }
             ]
         });
+
 
         const service = new google.maps.places.PlacesService(map);
 
@@ -109,4 +110,3 @@
 
 </body>
 </html>
-
