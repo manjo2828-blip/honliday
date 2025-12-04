@@ -26,7 +26,7 @@
             width: 100%;
             padding: 15px 30px;
             background: rgba(255,255,255,0.92);
-            z-index: 20;   /* 헤더가 제일 위 */
+            z-index: 20;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -46,10 +46,10 @@
             font-weight: 600;
         }
 
-        /* 🔍 검색창 박스 (헤더 바로 아래 왼쪽) */
+        /* 🔍 검색창 박스 */
         #search-box {
             position: absolute;
-            top: 62px;        /* 헤더 아래에 붙이기 */
+            top: 62px;
             left: 30px;
             z-index: 15;
             background: rgba(255,255,255,0.96);
@@ -109,50 +109,22 @@
     let map;
     let Place;
 
-    async function searchAndZoom() {
-    const query = input.value.trim();
-    if (!query) return;
+    async function initMap() {
+        const ptu = { lat: 36.9982, lng: 127.1320 };
 
-    const request = {
-        textQuery: query + " 평택대학교 근처",   // 더 정확한 검색을 위해 수정
-        fields: ["displayName", "location"]
-    };
-
-    try {
-        const { places } = await Place.searchByText(request);
-
-        if (!places || places.length === 0) {
-            alert("검색 결과가 없습니다.");
-            return;
-        }
-
-        const target = places[0];
-        const loc = target.location;
-
-        if (!loc) {
-            alert("이 장소의 위치 정보가 없습니다.");
-            return;
-        }
-
-        // 🔥 정확히 해당 음식점 좌표로 이동
-        const position = { lat: loc.latitude, lng: loc.longitude };
-
-        // 마커 생성 (검색 이동용)
-        new google.maps.Marker({
-            map,
-            position,
-            title: target.displayName
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: ptu,
+            zoom: 15
         });
 
-        // 지도 이동 + 확대
-        map.panTo(position);
-        map.setZoom(19); // 더 확대해서 정확히 보이게
-    } catch (e) {
-        console.error("검색 오류:", e);
-        alert("검색 중 오류가 발생했습니다.");
-    }
-    }
+        const lib = await google.maps.importLibrary("places");
+        Place = lib.Place;
 
+        // 초기 음식점 마커 표시
+        const initialRequest = {
+            textQuery: "restaurant near 평택대학교",
+            fields: ["displayName", "location"]
+        };
 
         try {
             const { places } = await Place.searchByText(initialRequest);
@@ -172,7 +144,7 @@
             console.error("초기 검색 오류:", e);
         }
 
-        // 🔍 검색 기능
+        // 검색 기능
         const input = document.getElementById("search-input");
         const button = document.getElementById("search-button");
 
@@ -181,7 +153,7 @@
             if (!query) return;
 
             const request = {
-                textQuery: query + " near 평택대학교",
+                textQuery: query + " 평택대학교 근처",
                 fields: ["displayName", "location"]
             };
 
@@ -196,11 +168,30 @@
                 const target = places[0];
                 const loc = target.location;
 
-                map.setCenter({ lat: loc.latitude, lng: loc.longitude });
-                map.setZoom(18);
+                if (!loc) {
+                    alert("위치 정보가 없는 장소입니다.");
+                    return;
+                }
+
+                const position = {
+                    lat: loc.latitude,
+                    lng: loc.longitude
+                };
+
+                // 검색된 장소 마커 생성
+                new google.maps.Marker({
+                    map,
+                    position,
+                    title: target.displayName
+                });
+
+                // 지도 이동
+                map.panTo(position);
+                map.setZoom(19);
+
             } catch (e) {
                 console.error("검색 오류:", e);
-                alert("검색 중 오류가 발생했습니다.");
+                alert("검색 중 문제가 발생했습니다.");
             }
         }
 
@@ -220,4 +211,3 @@
 
 </body>
 </html>
-
